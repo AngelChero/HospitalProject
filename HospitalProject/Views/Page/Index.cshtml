@@ -1,0 +1,61 @@
+﻿@using HospitalProject.Class
+@model IEnumerable<PageClass>
+
+@{
+    string pageName = ViewBag.PageName;
+}
+
+<div class="row">
+    <div class="col-6">
+        <h3>Lista de Páginas</h3>
+    </div>
+    <div class="col-6">
+        <a class="btn btn-success d-block" asp-action="Create">Crear Nueva Página</a>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-6">
+        <form id="frmfilterMessage" asp-action="Index" method="post">
+            <label class="form-label">Buscar por Mensaje:</label>
+            <input id="filterMessage" class="form-control" type="text" 
+                value="@pageName" name="Message" autocomplete="off" />
+            <input class="btn btn-primary" type="submit" value="Buscar"/>
+            <input class="btn btn-danger" type="button" value="Limpiar" onclick="Clean()"/>
+        </form>
+    </div>
+</div>
+<br />
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+            <th>@Html.DisplayNameFor(p => p.Id)</th>
+            <th>@Html.DisplayNameFor(p => p.Message)</th>
+            <th>@Html.DisplayNameFor(p => p.Action)</th>
+            <th>@Html.DisplayNameFor(p => p.Controller)</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var page in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(p => page.Id)</td>
+                <td>@Html.DisplayFor(p => page.Message)</td>
+                <td>@Html.DisplayFor(p => page.Action)</td>
+                <td>@Html.DisplayFor(p => page.Controller)</td>
+                <td>
+                    <a class="btn btn-primary" asp-action="Edit">Editar</a>
+                    <a class="btn btn-danger" asp-action="Remove">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function Clean() {
+        document.getElementById('filterMessage').value = "";
+        document.getElementById('frmfilterMessage').submit();
+    }
+</script>

@@ -1,0 +1,59 @@
+﻿@using HospitalProject.Class;
+@model IEnumerable<SpecialityClass>
+@{
+    ViewData["Title"] = "Index";
+    string specialityName = ViewBag.specialityName;
+}
+
+<br />
+<div class="row">
+    <div class="col-6">
+        <h3>Lista de Especialidades</h3>
+    </div>
+    <div class="col-6">
+        <a asp-action="Create" class="btn btn-success d-block">Agregar Nueva Especialidad</a>
+    </div>
+</div>
+<br />
+<div>
+    <form id="frmfilterSpecialties" asp-action="Index" method="get">
+        <label>Buscar por Nombre:</label>
+        <input id="filterSpecialties" type="text" name="specialityName" value="@specialityName" autocomplete="off"/>
+        <input class="btn btn-success" type="submit" value="Buscar"/>
+        <input class="btn btn-danger" type="button" value="Limpiar" onclick="Clean()"/>
+    </form>
+</div>
+<br />
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Id)</th>
+                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var speciality in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(model => speciality.Id)</td>
+                    <td>@Html.DisplayFor(model => speciality.Name)</td>
+                    <td>@Html.DisplayFor(model => speciality.Description)</td>
+                    <td>
+                        <a asp-action="Edit" class="btn btn-primary">Editar</a>
+                        <a asp-action="Delete" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function Clean(){
+        document.getElementById('filterSpecialties').value = "";
+        document.getElementById('frmfilterSpecialties').submit();
+    }
+</script>

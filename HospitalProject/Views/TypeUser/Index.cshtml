@@ -1,0 +1,56 @@
+﻿@using HospitalProject.Class
+@model IEnumerable<TypeUserClass>
+
+@{
+    int id = ViewBag.Id;
+    string name = ViewBag.Name;
+    string description = ViewBag.Description;
+}
+
+<div class="row">
+    <div class="col-6">
+        <h3 class="text-center">Lista de Tipos de Usuarios - ROLES</h3>
+    </div>
+    <div class="col-6">
+        <a class="btn btn-success d-block" asp-action="Create">Crear Nuevo Tipo de Usuario</a>
+    </div>
+</div>
+
+<form asp-action="Index" method="post">
+    <input class="btn tbn-success" type="submit" value="Filtrar"/>
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Id)</th>
+                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>Acciones</th>
+            </tr>
+            <tr>
+                <th>
+                    <input class="form-control" type="number" name="Id" value="@id"/>
+                </th>
+                <th>
+                    <input class="form-control" type="text" name="Name" value="@name"/>
+                </th>
+                <th>
+                    <input class="form-control" type="text" name="Description" value="@description" />
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var typeUser in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(t => typeUser.Id)</td>
+                    <td>@Html.DisplayFor(t => typeUser.Name)</td>
+                    <td>@Html.DisplayFor(t => typeUser.Description)</td>
+                    <td>
+                        <a class="btn btn-primary" asp-action="Edit">Editar</a>
+                        <a class="btn btn-danger" asp-action="Delete">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
