@@ -1,7 +1,16 @@
+using HospitalProject.DataAccess;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+builder.Services.AddScoped<SpecialityDataContext>();
+builder.Services.AddScoped<PersonDataContext>();
+builder.Services.AddScoped<PageDataContext>();
+builder.Services.AddScoped<MedicineDataContext>();
+builder.Services.AddScoped<CampusDataContext>();
+builder.Services.AddScoped<TypeUserDataContext>();
 
 var app = builder.Build();
 

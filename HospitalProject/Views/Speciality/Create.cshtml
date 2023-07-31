@@ -1,0 +1,44 @@
+﻿@using HospitalProject.Class;
+@model SpecialityClass
+
+@{
+}
+
+
+<div class="row">
+    <div class="col-6 align-content-center">
+        <form id="frmCreateSpeciality" asp-action="Create">
+            <div asp-validation-summary="ModelOnly"></div>
+            <label class="form-label" asp-for="Name"></label>
+            <input class="form-control" asp-for="Name" autocomplete="off"/>
+            <span class="text-danger" asp-validation-for="Name"></span>
+            <br />
+            <label class="form-label" asp-for="Description"></label>
+            <input class="form-control" asp-for="Description" autocomplete="off"/>
+            <span class="text-danger" asp-validation-for="Description"></span>
+            <br />
+            <a class="btn btn-primary" asp-action="Index">Regresar</a>
+            <input class="btn btn-success" type="button" value="Agregar" onclick="btnAdd()"/>  
+        </form>
+    </div>
+</div>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+
+}
+
+<script>
+    function btnAdd() {
+        confirmBtnModal(titulo = "¿Estás seguro de confirmar el registro?",
+            texto = "¡Esta acción no se podrá revertir!").then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('frmCreateSpeciality').submit();
+            }
+        })
+    }
+</script>
+
