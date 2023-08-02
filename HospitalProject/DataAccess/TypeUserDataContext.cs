@@ -59,5 +59,28 @@ namespace HospitalProject.DataAccess
 
             return filterTypeUsers;
         }
+
+        public async Task<bool> CreateTypeUser(TypeUserClass typeUserClass)
+        {
+            TipoUsuario tipoUsuario = new TipoUsuario();
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    tipoUsuario.Nombre = typeUserClass.Name;
+                    tipoUsuario.Descripcion = typeUserClass.Description;
+                    tipoUsuario.Bhabilitado = 1;
+                    await db.TipoUsuarios.AddAsync(tipoUsuario);
+                    await db.SaveChangesAsync();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }   
+        }
     }
 }

@@ -1,0 +1,47 @@
+﻿@using HospitalProject.Class
+@model TypeUserClass
+
+@{
+
+}
+
+<h3>Crear Nuevo Tipo de Usuario</h3>
+<br />
+<div class="row">
+    <div class="col-sm-6">
+        <form id="frmCreateTypeUser" asp-action="Create">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <label class="form-label" asp-for="Name"></label>
+                <input class="form-control" asp-for="Name"/>
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Description"></label>
+                <input class="form-control" asp-for="Description" />
+                <span class="text-danger" asp-validation-for="Description"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <a class="btn btn-primary" asp-action="Index">Regresar</a>
+                <input class="btn btn-success" type="button" value="Agregar" onclick="btnAdd()"/>
+            </div>
+            <br />
+        </form>
+    </div>
+</div>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+
+<script>
+    function btnAdd() {
+        confirmBtnModal().then((result) => {
+            if(result.isConfirmed) {
+                document.getElementById('frmCreateTypeUser').submit();
+            }
+        })
+    }
+</script>
+

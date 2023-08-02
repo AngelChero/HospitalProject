@@ -51,5 +51,23 @@ namespace HospitalProject.Controllers
 
             return View(listTypeUsers);
         }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(TypeUserClass typeUserClass)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(typeUserClass);
+            }
+
+            await typeUserDataContext.CreateTypeUser(typeUserClass);
+            return RedirectToAction("Index");
+        }
     }
 }

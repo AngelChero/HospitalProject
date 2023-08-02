@@ -64,5 +64,32 @@ namespace HospitalProject.DataAccess
 
             return listPagesByMessage;
         }
+
+        public async Task<bool> CreatePage(PageClass pageClass)
+        {
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    Pagina pagina = new Pagina()
+                    {
+                        Mensaje = pageClass.Message,
+                        Accion = pageClass.Action,
+                        Controlador = pageClass.Controller,
+                        Bhabilitado = 1
+                    };
+
+                    await db.Paginas.AddAsync(pagina);
+                    await db.SaveChangesAsync();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

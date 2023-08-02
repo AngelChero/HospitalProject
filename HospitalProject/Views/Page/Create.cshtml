@@ -1,0 +1,55 @@
+﻿@using HospitalProject.Class;
+@model PageClass
+
+@{
+
+}
+
+<h3 class="text-center">Agregar Nueva Página</h3>
+<br />
+<div class="row">
+    <div class="col-sm-6">
+        <form id="frmAddPage" asp-action="Create">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <label class="form-label" asp-for="Message"></label>
+                <input class="form-control" asp-for="Message"/>
+                <span class="text-danger" asp-validation-for="Message"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Action"></label>
+                <input class="form-control" asp-for="Action" />
+                <span class="text-danger" asp-validation-for="Action"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Controller"></label>
+                <input class="form-control" asp-for="Controller" />
+                <span class="text-danger" asp-validation-for="Controller"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <a class="btn btn-primary" asp-action="Index">Regresar</a>
+                <input class="btn btn-success" type="button" value="Agregar" onclick="btnAdd()"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<script>
+    function btnAdd() {
+        confirmBtnModal().then((result) => {
+            if(result.isConfirmed) {
+                document.getElementById('frmAddPage').submit();
+            }
+        })
+    }
+</script>

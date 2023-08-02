@@ -1,0 +1,67 @@
+﻿@using HospitalProject.Class;
+@model MedicineClass
+
+@{
+    List<SelectListItem> ListPharmaceuticalForm = ViewBag.ListPharmaceuticalForm;
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <form id="frmAddMedicine" asp-action="Create">
+            <div class="form-group">
+                <label class="form-label" asp-for="Name"></label>
+                <input class="form-control" asp-for="Name" />
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Concentration"></label>
+                <input class="form-control" asp-for="Concentration" />
+                <span class="text-danger" asp-validation-for="Concentration"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="IdPharmaceuticalForm"></label>
+                <select class="form-control" asp-for="IdPharmaceuticalForm" 
+                asp-items="@ListPharmaceuticalForm"></select>
+                <span class="text-danger" asp-validation-for="IdPharmaceuticalForm"></span>
+            </div>
+            <br />
+            <label class="form-label" asp-for="Price"></label>
+            <input class="form-control" asp-for="Price" />
+            <span class="text-danger" asp-validation-for="Price"></span>
+            <br />
+            <label class="form-label" asp-for="Stock"></label>
+            <input class="form-control" asp-for="Stock" />
+            <span class="text-danger" asp-validation-for="Stock"></span>
+            <br />
+            <label class="form-label" asp-for="Presentation"></label>
+            <input class="form-control" asp-for="Presentation" />
+            <span class="text-danger" asp-validation-for="Presentation"></span>
+            <br />
+            <a class="btn btn-primary" asp-action="Index">Regresar</a>
+            <input class="btn btn-success" type="button" value="Agregar" onclick="btnAdd()"/>
+        </form>
+    </div>
+</div>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"/>
+}
+
+<script>
+    function btnAdd() {
+        confirmBtnModal(
+            titulo = "¿Estás seguro de guardar los cambios?",
+            texto = "¡Esta acción no se podrá revertir!"
+        ).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('frmAddMedicine').submit();
+            }
+        })
+    }
+</script>
+

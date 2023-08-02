@@ -13,11 +13,12 @@ namespace HospitalProject.Controllers
             this.medicineDataContext = medicineDataContext;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index(MedicineClass medicineClass)
         {
             List<MedicineClass> listMedicines;
             ViewBag.ListPharmaceuticalForm = await medicineDataContext.ListPharmaceuticalForm();
-            if (medicineClass.IdPharmaceuticalForm == 0)
+            if (medicineClass.IdPharmaceuticalForm == 0 || medicineClass.IdPharmaceuticalForm == null)
             {
                 listMedicines = await medicineDataContext.GetMedicines();
             }
@@ -27,6 +28,26 @@ namespace HospitalProject.Controllers
             }
 
             return View(listMedicines);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            ViewBag.ListPharmaceuticalForm = await medicineDataContext.ListPharmaceuticalForm();
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(MedicineClass medicineClass)
+        {
+            ViewBag.ListPharmaceuticalForm = await medicineDataContext.ListPharmaceuticalForm();
+            if (!ModelState.IsValid)
+            {
+                return View(medicineClass);
+            }
+
+            await medicineDataContext.CreateMedicine(medicineClass);
+            return RedirectToAction("Index");
         }
     }
 }

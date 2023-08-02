@@ -18,7 +18,7 @@
 </div>
 <br />
 <div>
-    <form id="frmFilterPharmaceuticalForm" asp-action="Index" method="post">
+    <form id="frmFilterPharmaceuticalForm" asp-action="Index" method="get">
         <label>Seleccione Forma Farmacéutica:</label>
         @Html.DropDownList("IdPharmaceuticalForm", listPharmaceuticalForm, new { @class = "form-control" })
     </form>

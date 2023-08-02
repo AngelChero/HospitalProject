@@ -1,4 +1,4 @@
-﻿function confirmBtnModal(titulo = "¿Estás seguro de guardas los cambios?",
+﻿function confirmBtnModal(titulo = "¿Estás seguro de guardar los cambios?",
     texto = "¡Esta acción no se podrá revertir!") {
     return Swal.fire({
         title: titulo,
@@ -7,6 +7,6 @@
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: '¡Sí!'
+        confirmButtonText: '¡Sí, seguro!'
     })
 }
