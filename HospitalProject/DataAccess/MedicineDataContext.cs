@@ -39,6 +39,33 @@ namespace HospitalProject.DataAccess
             return listMedicines;
         }
 
+        public async Task<bool> CreateMedicine(MedicineClass medicineClass)
+        {
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    Medicamento medicamento = new Medicamento();
+                    medicamento.Nombre = medicineClass.Name;
+                    medicamento.Concentracion = medicineClass.Concentration;
+                    medicamento.Iidformafarmaceutica = medicineClass.IdPharmaceuticalForm;
+                    medicamento.Precio = medicineClass.Price;
+                    medicamento.Stock = medicineClass.Stock;
+                    medicamento.Presentacion = medicineClass.Presentation;
+                    medicamento.Bhabilitado = 1;
+                    await db.Medicamentos.AddAsync(medicamento);
+                    await db.SaveChangesAsync();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<MedicineClass>> FilterMedicineByName(string medicineName)
         {
             List<MedicineClass> filterMedicine = new List<MedicineClass>();
@@ -113,7 +140,7 @@ namespace HospitalProject.DataAccess
                                 join pharmaceuticalForm in db.FormaFarmaceuticas
                                 on medicine.Iidformafarmaceutica equals pharmaceuticalForm.Iidformafarmaceutica
                                 where medicine.Bhabilitado == 1
-                                && pharmaceuticalForm.Iidformafarmaceutica == medicineClass.IdPharmaceuticalForm
+                                && medicine.Iidformafarmaceutica == medicineClass.IdPharmaceuticalForm
                                 select new MedicineClass
                                 {
                                     Id = medicine.Iidmedicamento,

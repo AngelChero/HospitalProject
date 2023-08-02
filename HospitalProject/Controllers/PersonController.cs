@@ -9,70 +9,50 @@ namespace HospitalProject.Controllers
 {
     public class PersonController : Controller
     {
+        private readonly PersonDataContext personDataContext;
+
+        public PersonController(PersonDataContext personDataContext)
+        {
+            this.personDataContext = personDataContext;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index(PersonClass personClass)
-        {   
-            ListSex();
-            List<PersonClass> listPersons = new List<PersonClass>();
-            using (BdhospitalContext db = new BdhospitalContext())
+        {
+            ViewBag.SexsList = await personDataContext.SexsList();
+            List<PersonClass> personsList;
+            if (string.IsNullOrEmpty(personClass.IdSexo.ToString()))
             {
-                if (personClass.IdSexo == 0)
-                {
-                    var query = from person in db.Personas
-                                join sex in db.Sexos
-                                on person.Iidsexo equals sex.Iidsexo
-                                where person.Bhabilitado == 1
-                                select new PersonClass
-                                {
-                                    Id = person.Iidpersona,
-                                    Name = person.Nombre,
-                                    LastName = person.Appaterno,
-                                    Sex = sex.Nombre
-                                };
-                    listPersons = await query.ToListAsync();
-                }
-                else
-                {
-                    var query = from person in db.Personas
-                                join sex in db.Sexos
-                                on person.Iidsexo equals sex.Iidsexo
-                                where person.Bhabilitado == 1
-                                && person.Iidsexo == personClass.IdSexo
-                                select new PersonClass
-                                {
-                                    Id = person.Iidpersona,
-                                    Name = person.Nombre,
-                                    LastName = person.Appaterno,
-                                    Sex = sex.Nombre
-                                };
-                    listPersons = await query.ToListAsync();
-                }
-
-                
+                personsList = await personDataContext.GetPersons();
             }
-            return View(listPersons);
+            else 
+            {
+                personsList = await personDataContext.PersonsFilterBySex(personClass);
+            }
+            return View(personsList);  
         }
 
-        public async Task<IActionResult> ListSex()
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
-            List<SelectListItem> listSex = new List<SelectListItem>();
-            using (BdhospitalContext db = new BdhospitalContext())
+            ViewBag.SexsList = await personDataContext.SexsList();
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(PersonClass personClass)
+        {
+            ViewBag.SexsList = await personDataContext.SexsList();
+            if (!ModelState.IsValid)
             {
-                var query = from sex in db.Sexos
-                            select new SelectListItem
-                            {
-                                Value = sex.Iidsexo.ToString(),
-                                Text = sex.Nombre
-                            };
-                listSex = await query.ToListAsync();
-                listSex.Insert(0, new SelectListItem
-                {
-                    Value = "",
-                    Text = "Seleccione --"
-                });
-                return ViewBag.ListSex = listSex;
+                return View(personClass);
             }
+            else
+            {
+                await personDataContext.CreatePerson(personClass);
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

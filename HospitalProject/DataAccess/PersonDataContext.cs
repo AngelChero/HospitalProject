@@ -36,7 +36,38 @@ namespace HospitalProject.DataAccess
             return listPerson;
         }
 
-        public async Task<List<PersonClass>> FilterPersons(string name)
+        public async Task<bool> CreatePerson(PersonClass personClass)
+        {
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    Persona persona = new Persona()
+                    {
+                        Nombre = personClass.Name,
+                        Appaterno = personClass.LastNameP,
+                        Apmaterno = personClass.LastNameM,
+                        Email = personClass.Email,
+                        Telefonofijo = personClass.Landline,
+                        Telefonocelular = personClass.CellPhone,
+                        Fechanacimiento = personClass.Birthdate,
+                        Iidsexo = personClass.IdSexo,
+                        Bhabilitado = 1
+                    };
+
+                    await db.Personas.AddAsync(persona);
+                    await db.SaveChangesAsync();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<List<PersonClass>> FilterPersonsByName(string name)
         {
             List<PersonClass> listPersons = new List<PersonClass>();
             try
@@ -67,9 +98,9 @@ namespace HospitalProject.DataAccess
             return listPersons;
         }
 
-        public async Task<List<SelectListItem>> CboSex()
+        public async Task<List<SelectListItem>> SexsList()
         {
-            List<SelectListItem> listSex = new List<SelectListItem>();
+            List<SelectListItem> sexsList = new List<SelectListItem>();
             try
             {
                 using (BdhospitalContext db = new BdhospitalContext())
@@ -78,55 +109,55 @@ namespace HospitalProject.DataAccess
                                 select new SelectListItem
                                 {
                                     Value = sex.Iidsexo.ToString(),
-                                    Text = sex.Nombre
+                                    Text = sex.Nombre,
                                 };
-                    listSex = await query.ToListAsync();
+                    sexsList = await query.ToListAsync();
+                    sexsList.Insert(0, new SelectListItem
+                    {
+                        Value = string.Empty,
+                        Text = "Seleccione --"
+                    });
                 }
 
-                listSex.Insert(0, new SelectListItem
-                {
-                    Value = string.Empty,
-                    Text = "Seleccione --"
-                });
+                return sexsList;
             }
             catch (Exception)
             {
 
                 throw;
             }
-                
-            return listSex;
         }
 
-        //public async Task<List<PersonClass>> FilterPersonsBySex(PersonClass selectedSex)
-        //{
-        //    List<PersonClass> listPersons = new List<PersonClass>();
-        //    try
-        //    {
-        //        using (BdhospitalContext db = new BdhospitalContext())
-        //        {
-        //            var query = from person in db.Personas
-        //                        join sexo in db.Sexos
-        //                        on person.Iidsexo equals sexo.Iidsexo
-        //                        where person.Bhabilitado == 1
-        //                        && person.Iidsexo == selectedSex.IdSexo
-        //                        select new PersonClass
-        //                        {
-        //                            Id = person.Iidpersona,
-        //                            Name = person.Nombre,
-        //                            LastName = person.Appaterno,
-        //                            Sex = sexo.Nombre
-        //                        };
-        //            listPersons = await query.ToListAsync();
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
+        public async Task<List<PersonClass>> PersonsFilterBySex(PersonClass personClass)
+        {
+            List<PersonClass> personsFilterByName = new List<PersonClass>();
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    var query = from person in db.Personas
+                                join sex in db.Sexos
+                                on person.Iidsexo equals sex.Iidsexo
+                                where person.Bhabilitado == 1
+                                && person.Iidsexo == personClass.IdSexo
+                                select new PersonClass
+                                {
+                                    Id = person.Iidpersona,
+                                    Name = person.Nombre,
+                                    LastName = person.Appaterno,
+                                    Sex = sex.Nombre
+                                };
+                    personsFilterByName = await query.ToListAsync();
 
-        //        throw;
-        //    }
+                }
 
-        //    return listPersons;
-        //}
+                return personsFilterByName;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

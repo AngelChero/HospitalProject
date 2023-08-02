@@ -1,0 +1,91 @@
+﻿@using HospitalProject.Class;
+@model PersonClass
+
+@{
+    List<SelectListItem> sexsList = ViewBag.SexsList;
+}
+
+<h3 class="text-center">Agregar Nueva Persona</h3>
+<br />
+<div class="row">
+    <div class="col-sm-6">
+        <form id="frmCreatePerson" asp-action="Create">
+            <div action="text-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <label class="form-label" asp-for="Name"></label>
+                <input class="form-control" asp-for="Name"/>
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="LastNameP"></label>
+                <input class="form-control" asp-for="LastNameP"/>
+                <span class="text-danger" asp-validation-for="LastNameP"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="LastNameM"></label>
+                <input class="form-control" asp-for="LastNameM" />
+                <span class="text-danger" asp-validation-for="LastNameM"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Email"></label>
+                <input class="form-control" asp-for="Email"/>
+                <span class="text-danger" asp-validation-for="Email"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Landline"></label>
+                <input class="form-control" asp-for="Landline"/>
+                <span class="text-danger" asp-validation-for="Landline"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="CellPhone"></label>
+                <input class="form-control" asp-for="CellPhone"/>
+                <span class="text-danger" asp-validation-for="CellPhone"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Birthdate"></label>
+                <input class="form-control" asp-for="Birthdate" />
+                <span class="text-danger" asp-validation-for="Birthdate"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="form-label" asp-for="IdSexo"></label>
+                <select class="form-control" asp-for="IdSexo"
+                asp-items="sexsList"></select>
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <a class="btn btn-primary" asp-action="Index">Regresar</a>
+                <input class="btn btn-success" type="button" value="Agregar" onclick="btnAdd()"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<script>
+    function btnAdd() {
+        confirmBtnModal().then((result) => {
+            if(result.isConfirmed) {
+                document.getElementById('frmCreatePerson').submit();
+            }
+        })
+    }
+</script>
+
+
+
+
+

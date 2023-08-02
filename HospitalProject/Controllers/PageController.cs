@@ -28,5 +28,23 @@ namespace HospitalProject.Controllers
             
             return View(listPages);
         }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(PageClass pageClass)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(pageClass);
+            }
+
+            await pageDataContext.CreatePage(pageClass);
+            return RedirectToAction("Index");
+        }
     }
 }
