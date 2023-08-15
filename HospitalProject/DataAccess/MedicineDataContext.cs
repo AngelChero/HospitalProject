@@ -39,6 +39,36 @@ namespace HospitalProject.DataAccess
             return listMedicines;
         }
 
+        public async Task<MedicineClass> GetMedicineById(int medicineId)
+        {
+            MedicineClass getMedicineById = new MedicineClass();
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    var query = from medicine in db.Medicamentos
+                                where medicine.Iidmedicamento == medicineId
+                                select new MedicineClass
+                                {
+                                    Name = medicine.Nombre,
+                                    Concentration = medicine.Concentracion,
+                                    IdPharmaceuticalForm = medicine.Iidformafarmaceutica,
+                                    Price = medicine.Precio,
+                                    Stock = medicine.Stock,
+                                    Presentation = medicine.Presentacion
+                                };
+                    getMedicineById = await query.FirstAsync();
+                }
+
+                return getMedicineById;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<bool> CreateMedicine(MedicineClass medicineClass)
         {
             try
@@ -54,6 +84,58 @@ namespace HospitalProject.DataAccess
                     medicamento.Presentacion = medicineClass.Presentation;
                     medicamento.Bhabilitado = 1;
                     await db.Medicamentos.AddAsync(medicamento);
+                    await db.SaveChangesAsync();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<Medicamento> EditMedicine(MedicineClass medicineClass)
+        {
+            Medicamento editMedicine = new Medicamento();
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    editMedicine.Iidmedicamento = medicineClass.Id;
+                    editMedicine.Nombre = medicineClass.Name;
+                    editMedicine.Concentracion = medicineClass.Concentration;
+                    editMedicine.Iidformafarmaceutica = medicineClass.IdPharmaceuticalForm;
+                    editMedicine.Precio = medicineClass.Price;
+                    editMedicine.Stock = medicineClass.Stock;
+                    editMedicine.Presentacion = medicineClass.Presentation;
+                    editMedicine.Bhabilitado = 1;
+                    db.Update(editMedicine);
+                    await db.SaveChangesAsync();
+                }
+
+                return editMedicine;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteMedicine(int id)
+        {
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    var query = from medicine in db.Medicamentos
+                                where medicine.Iidmedicamento == id
+                                && medicine.Bhabilitado == 1
+                                select medicine;
+                    var deleteMedicine = await query.FirstAsync();
+                    deleteMedicine.Bhabilitado = 0;
                     await db.SaveChangesAsync();
                 }
 

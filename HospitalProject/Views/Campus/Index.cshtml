@@ -39,19 +39,36 @@
                 <td>@Html.DisplayFor(c => campus.Direction)</td>
                 <td>
                     <a class="btn btn-primary" asp-action="Edit">Editar</a>
-                    <a class="btn btn-danger" asp-action="Delete">Eliminar</a>
+                    <i class="fa fa-trash btn btn-danger" onclick="btnDelete(@campus.Id)"></i>
                 </td>
             </tr>
         }
     </tbody>
-</table>
+</table><br />
+<form id="frmDeleteCampus" asp-action="Delete" hidden>
+    <input id="campusId" type="text" name="Id"/>
+</form>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+
 <script>
     let timeoutId;
     function debounce(func, delay) {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(func, delay);
     }
+
     function filterCampus() {
         document.getElementById('frmfilterCampus').submit();
+    }
+
+    function btnDelete(campusId) {
+        document.getElementById('campusId').value = campusId;
+        confirmBtnModal().then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('frmDeleteCampus').submit();
+            }
+        })
     }
 </script>

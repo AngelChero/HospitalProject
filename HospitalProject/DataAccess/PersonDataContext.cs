@@ -36,6 +36,29 @@ namespace HospitalProject.DataAccess
             return listPerson;
         }
 
+        public async Task<Persona> GetPersonById(int id)
+        {
+            Persona getPersonById = new Persona();
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    var query = from person in db.Personas
+                                where person.Iidpersona == id
+                                && person.Bhabilitado == 1
+                                select person;
+                    getPersonById = await query.FirstAsync();
+                }
+
+                return getPersonById;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<bool> CreatePerson(PersonClass personClass)
         {
             try
@@ -67,6 +90,31 @@ namespace HospitalProject.DataAccess
                 throw;
             }
         }
+
+        public async Task<bool> DeletePerson(int id)
+        {
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    var query = from person in db.Personas
+                                where person.Iidpersona == id
+                                && person.Bhabilitado == 1
+                                select person;
+                    var model = await query.FirstAsync();
+                    model.Bhabilitado = 0;
+                    await db.SaveChangesAsync();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<List<PersonClass>> FilterPersonsByName(string name)
         {
             List<PersonClass> listPersons = new List<PersonClass>();
@@ -152,6 +200,28 @@ namespace HospitalProject.DataAccess
                 }
 
                 return personsFilterByName;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<bool> DuplicatePerson(PersonClass personClass)
+        {
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    var query = await (from person in db.Personas
+                                      where person.Nombre.ToLower() == personClass.Name.ToLower()
+                                      && person.Appaterno.ToLower() == personClass.LastNameP.ToLower()
+                                      && person.Apmaterno.ToLower() == personClass.LastNameM.ToLower()
+                                      && person.Bhabilitado == 1
+                                      select person).AnyAsync();
+                    return query;
+                }
             }
             catch (Exception)
             {

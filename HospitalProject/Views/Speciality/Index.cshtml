@@ -26,6 +26,7 @@
 <br />
 <div class="row">
     <table class="table">
+        <a asp-action="ExportExcel">Exportar a Excel</a>
         <thead>
             <tr>
                 <th>@Html.DisplayNameFor(model => model.Id)</th>
@@ -42,8 +43,9 @@
                     <td>@Html.DisplayFor(model => speciality.Name)</td>
                     <td>@Html.DisplayFor(model => speciality.Description)</td>
                     <td>
-                        <a asp-action="Edit" class="btn btn-primary">Editar</a>
-                        <a asp-action="Delete" class="btn btn-danger">Eliminar</a>
+                        @*<a class="fa fa-edit btn btn-warning" onclick="btnEdit(@speciality.Id)"></a>*@
+                        <a class="btn btn-warning" asp-action="Edit" asp-route-id="@speciality.Id">Editar</a>
+                        <i class="fa fa-trash btn btn-danger" onclick="btnDelete(@speciality.Id)"></i>
                     </td>
                 </tr>
             }
@@ -51,9 +53,29 @@
     </table>
 </div>
 
+<div>
+    <form id="frmDeleteSpeciality" asp-action="Delete" hidden>
+        <input id="EspecialityId" type="text" name="Id"/>
+    </form>
+</div>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+
 <script>
     function Clean(){
         document.getElementById('filterSpecialties').value = "";
         document.getElementById('frmfilterSpecialties').submit();
     }
+
+    function btnDelete(specialityId) {
+        document.getElementById('EspecialityId').value = specialityId;
+        confirmBtnModal().then((result => {
+            if (result.isConfirmed) {
+                document.getElementById('frmDeleteSpeciality').submit();
+            }
+        }));
+    }
 </script>
+
+                    

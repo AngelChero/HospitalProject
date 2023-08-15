@@ -60,5 +60,29 @@ namespace HospitalProject.DataAccess
 
             return filterCampus;
         }
+
+        public async Task<bool> DeleteCampus(CampusClass campusClass)
+        {
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    var query = from campus in db.Sedes
+                                where campus.Bhabilitado == 1
+                                && campus.Iidsede == campusClass.Id
+                                select campus;
+                    var selectedCampus = await query.FirstAsync();
+                    selectedCampus.Bhabilitado = 0;
+                    await db.SaveChangesAsync();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
