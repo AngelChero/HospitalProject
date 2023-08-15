@@ -42,7 +42,14 @@ namespace HospitalProject.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PersonClass personClass)
         {
+            var duplicatePerson = await personDataContext.DuplicatePerson(personClass);
             ViewBag.SexsList = await personDataContext.SexsList();
+            if (duplicatePerson)
+            {
+                ModelState.AddModelError(nameof(personClass),
+                    $"Ya existe una persona con el mismo nombre: {personClass.Name} y los apellidos: {personClass.LastNameP} {personClass.LastNameM}, por favor ingrese otros datos diferentes.");
+                return View(personClass);
+            }
             if (!ModelState.IsValid)
             {
                 return View(personClass);
@@ -52,6 +59,13 @@ namespace HospitalProject.Controllers
                 await personDataContext.CreatePerson(personClass);
             }
 
+            return RedirectToAction("Index");
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await personDataContext.DeletePerson(id);
             return RedirectToAction("Index");
         }
     }

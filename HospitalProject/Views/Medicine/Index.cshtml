@@ -46,17 +46,33 @@
                 <td>@Html.DisplayFor(m => medicine.Stock)</td>
                 <td>@Html.DisplayFor(m => medicine.PharmaceuticalForm)</td>
                 <td>
-                    <a class="btn btn-primary" asp-action="Edit">Editar</a>
-                    <a class="btn btn-danger" asp-action="Delete">Eliminar</a>
+                    <a class="fa fa-edit btn btn-outline-primary" asp-action="Edit" asp-route-id="@medicine.Id"></a>
+                    <i class="fas fa-trash btn btn-danger" onclick="btnDelete(@medicine.Id)"></i>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
+<form asp-action="Delete" id="frmDeleteMedicine">
+    <input type="text" name="id" id="medicineId"/>
+</form>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+
 <script>
     var IdPharmaceuticalForm = document.getElementById('IdPharmaceuticalForm');
     IdPharmaceuticalForm.onchange = function () {
         document.getElementById('frmFilterPharmaceuticalForm').submit();
+    }
+
+    function btnDelete(medicineId) {
+        document.getElementById('medicineId').value = medicineId;
+        confirmBtnModal().then((result) => {
+            if(result.isConfirmed) {
+                document.getElementById('frmDeleteMedicine').submit();
+            }
+        })
     }
 </script>

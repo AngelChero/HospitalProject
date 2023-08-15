@@ -1,0 +1,58 @@
+﻿@using HospitalProject.Class
+@model MedicineClass
+
+@{
+    List<SelectListItem> listPharmaceuticalForm = ViewBag.listPharmaceuticalForm;
+}
+<br />
+<h3 class="text-center">Editar Medicamento</h3><br />
+<div class="row">
+    <div class="col-sm-6">
+        <form asp-action="Edit">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <label class="form-label" asp-for="Name"></label>
+                <input class="form-control" asp-for="Name"/>
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div><br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Concentration"></label>
+                <input class="form-control" asp-for="Concentration" />
+                <span class="text-danger" asp-validation-for="Concentration"></span>
+            </div><br />
+            <div class="form-group">
+                <label class="form-label" asp-for="IdPharmaceuticalForm"></label>
+                <select class="form-select" asp-for="IdPharmaceuticalForm">
+                    @foreach (var item in listPharmaceuticalForm)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+                <span class="text-danger" asp-validation-for="Concentration"></span>
+            </div><br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Price"></label>
+                <input class="form-control" asp-for="Price" />
+                <span class="text-danger" asp-validation-for="Price"></span>
+            </div><br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Stock"></label>
+                <input class="form-control" asp-for="Stock" />
+                <span class="text-danger" asp-validation-for="Stock"></span>
+            </div><br />
+            <div class="form-group">
+                <label class="form-label" asp-for="Presentation"></label>
+                <input class="form-control" asp-for="Presentation"/>
+                <span class="text-danger" asp-validation-for="Presentation"></span>
+            </div><br />
+            <div class="form-group">
+                <a class="btn btn-primary" asp-action="Index">Regresar</a>
+                <input class="btn btn-success" type="submit" value="Guardar"/>
+            </div><br />
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

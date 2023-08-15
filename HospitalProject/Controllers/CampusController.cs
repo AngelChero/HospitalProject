@@ -27,5 +27,21 @@ namespace HospitalProject.Controllers
             }
             return View(listCampus);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(CampusClass campusClass)
+        {
+            bool campusSelected;
+            try
+            {
+                campusSelected = await campusDataContext.DeleteCampus(campusClass);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

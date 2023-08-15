@@ -28,7 +28,7 @@
     </form>
 </div>
 <br />
-<table class="table">
+<table class="table" id="tablePaginate">
     <thead>
         <tr>
             <th>@Html.DisplayNameFor(model => model.Id)</th>
@@ -48,16 +48,36 @@
                 <td>@Html.DisplayFor(p => person.Sex)</td>
                 <td>
                     <a class="btn btn-primary" asp-action="Create">Editar</a>
-                    <a class="btn btn-danger" asp-action="Create">Eliminar</a>
+                    <i class="fa fa-trash btn btn-danger" onclick="btnDelete(@person.Id)"></i>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
+<form asp-action="Delete" id="frmDeletePerson">
+    <input type="text" name="id" id="personId"/>
+</form>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+
 <script>
+    window.onload = function() {
+        let table = new DataTable('#tablePaginate');
+    }
+
     function clean() {
         document.getElementById('IdSexo').value = "";
         document.getElementById('frmFilterSex').submit();
+    }
+
+    function btnDelete(personId){
+        document.getElementById('personId').value = personId;
+        confirmBtnModal().then((result) => {
+            if(result.isConfirmed) {
+                document.getElementById('frmDeletePerson').submit();
+            }
+        })
     }
 </script>

@@ -1,5 +1,6 @@
 ﻿using HospitalProject.Class;
 using HospitalProject.DataAccess;
+using HospitalProject.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalProject.Controllers
@@ -49,5 +50,33 @@ namespace HospitalProject.Controllers
             await medicineDataContext.CreateMedicine(medicineClass);
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            ViewBag.listPharmaceuticalForm = await medicineDataContext.ListPharmaceuticalForm();
+            var editMedicine = await medicineDataContext.GetMedicineById(id);
+            return View(editMedicine);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(MedicineClass medicineClass)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(medicineClass);
+            }
+
+            await medicineDataContext.EditMedicine(medicineClass);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await medicineDataContext.DeleteMedicine(id);
+            return RedirectToAction("Index");
+        }
+        
     }
 }
