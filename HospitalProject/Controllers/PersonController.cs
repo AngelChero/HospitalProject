@@ -17,20 +17,36 @@ namespace HospitalProject.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(PersonClass personClass)
+        public async Task<IActionResult> Index()
         {
             ViewBag.SexsList = await personDataContext.SexsList();
-            List<PersonClass> personsList;
-            if (string.IsNullOrEmpty(personClass.IdSexo.ToString()))
-            {
-                personsList = await personDataContext.GetPersons();
-            }
-            else 
-            {
-                personsList = await personDataContext.PersonsFilterBySex(personClass);
-            }
-            return View(personsList);  
+            return View();
         }
+
+        public async Task<List<PersonClass>> ListPersons(int? sexId)
+        {
+            ViewBag.SexsList = await personDataContext.SexsList();
+            List<PersonClass> listPersons = new List<PersonClass>();
+            try
+            {
+                if (sexId == null)
+                {
+                    listPersons = await personDataContext.GetPersons();    
+                }
+                else
+                {
+                    listPersons = await personDataContext.PersonsFilterBySex(sexId);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return listPersons;
+        }
+
+
 
         [HttpGet]
         public async Task<IActionResult> Create()

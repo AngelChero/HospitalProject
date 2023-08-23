@@ -2,7 +2,7 @@
 @model IEnumerable<PageClass>
 
 @{
-    string pageName = ViewBag.PageName;
+    
 }
 
 <div class="row">
@@ -12,50 +12,67 @@
     <div class="col-6">
         <a class="btn btn-success d-block" asp-action="Create">Crear Nueva Página</a>
     </div>
-</div>
-<br />
+</div><br />
 <div class="row">
-    <div class="col-6">
-        <form id="frmfilterMessage" asp-action="Index" method="post">
-            <label class="form-label">Buscar por Mensaje:</label>
-            <input id="filterMessage" class="form-control" type="text" 
-                value="@pageName" name="Message" autocomplete="off" />
-            <input class="btn btn-primary" type="submit" value="Buscar"/>
-            <input class="btn btn-danger" type="button" value="Limpiar" onclick="Clean()"/>
-        </form>
+    <div class="col-3">
+        <input type="text" id="txtMessage"/>
+        <input class="btn btn-primary" type="button" value="Buscar" onclick="filterPageByMessage()" />
+        <input class="btn btn-danger" type="button" value="Limpiar" onclick="clean()"/>
+    </div>
+</div><br />
+<div class="row">
+    <div class="col-12">
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(p => p.Id)</th>
+                    <th>@Html.DisplayNameFor(p => p.Message)</th>
+                    <th>@Html.DisplayNameFor(p => p.Action)</th>
+                    <th>@Html.DisplayNameFor(p => p.Controller)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tblData">
+            </tbody>
+        </table>
     </div>
 </div>
-<br />
-<table class="table">
-    <thead class="table-dark">
-        <tr>
-            <th>@Html.DisplayNameFor(p => p.Id)</th>
-            <th>@Html.DisplayNameFor(p => p.Message)</th>
-            <th>@Html.DisplayNameFor(p => p.Action)</th>
-            <th>@Html.DisplayNameFor(p => p.Controller)</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var page in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(p => page.Id)</td>
-                <td>@Html.DisplayFor(p => page.Message)</td>
-                <td>@Html.DisplayFor(p => page.Action)</td>
-                <td>@Html.DisplayFor(p => page.Controller)</td>
-                <td>
-                    <a class="btn btn-primary" asp-action="Edit">Editar</a>
-                    <a class="btn btn-danger" asp-action="Remove">Eliminar</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
 
 <script>
-    function Clean() {
-        document.getElementById('filterMessage').value = "";
-        document.getElementById('frmfilterMessage').submit();
+    window.onload = function() {
+        let url = "Page/PageList"
+        paintData(url, ["id", "message", "action", "controller"], "id", "Page");
     }
+
+    function filterPageByMessage() {
+        let txtMessage = document.getElementById('txtMessage').value;
+        let url = `Page/PageByMessage/?message=${txtMessage}`
+        paintData(url, ["id", "message", "action", "controller"], "id", "Page");
+    }
+
+    function clean() {
+        document.getElementById('txtMessage').value = "";
+        let url = "Page/PageList"
+        paintData(url, ["id", "message", "action", "controller"], "id", "Page");
+    }
+
+    function btnDelete(pageId) {
+        confirmBtnModal().then((result) => {
+            if(result.isConfirmed) {
+                let url = "Page/PageList"
+                $.get(`Page/Delete/?pageId=${pageId}`, function(response) {
+                    if(response) {
+                        paintData(url, ["id", "message", "action", "controller"], "id", "Page");
+                    }
+                    else {
+                        console.log("El responde es false");
+                    }
+                })
+            }
+        })
+    }
+
 </script>

@@ -49,14 +49,14 @@ namespace HospitalProject.DataAccess
                                 select person;
                     getPersonById = await query.FirstAsync();
                 }
-
-                return getPersonById;
             }
             catch (Exception)
             {
 
                 throw;
             }
+
+            return getPersonById;
         }
 
         public async Task<bool> CreatePerson(PersonClass personClass)
@@ -176,9 +176,9 @@ namespace HospitalProject.DataAccess
             }
         }
 
-        public async Task<List<PersonClass>> PersonsFilterBySex(PersonClass personClass)
+        public async Task<List<PersonClass>> PersonsFilterBySex(int? sexId)
         {
-            List<PersonClass> personsFilterByName = new List<PersonClass>();
+            List<PersonClass> personsFilterBySex = new List<PersonClass>();
             try
             {
                 using (BdhospitalContext db = new BdhospitalContext())
@@ -187,7 +187,7 @@ namespace HospitalProject.DataAccess
                                 join sex in db.Sexos
                                 on person.Iidsexo equals sex.Iidsexo
                                 where person.Bhabilitado == 1
-                                && person.Iidsexo == personClass.IdSexo
+                                && person.Iidsexo == sexId
                                 select new PersonClass
                                 {
                                     Id = person.Iidpersona,
@@ -195,17 +195,17 @@ namespace HospitalProject.DataAccess
                                     LastName = person.Appaterno,
                                     Sex = sex.Nombre
                                 };
-                    personsFilterByName = await query.ToListAsync();
+                    personsFilterBySex = await query.ToListAsync();
 
-                }
-
-                return personsFilterByName;
+                }                
             }
             catch (Exception)
             {
 
                 throw;
             }
+
+            return personsFilterBySex;
         }
 
         public async Task<bool> DuplicatePerson(PersonClass personClass)

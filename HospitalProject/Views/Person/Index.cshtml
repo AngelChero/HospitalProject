@@ -13,63 +13,46 @@
     <div class="col-6">
         <a class="btn btn-success d-block" asp-action="Create">Agregar Nueva Persona</a>
     </div>
-</div>
-<br />
+</div><br />
 <div>
     
+</div><br />
+<div class="row">
+    <div class="col-3">
+        <select class="form-select" id="cboSexId" onchange="personsFilterBySex()">
+            @foreach (var item in sexsList)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+</div><br />
+<div class="row">
+    <div class="col-12">
+        <table class="table" id="tablePaginate">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Id)</th>
+                    <th>@Html.DisplayNameFor(model => model.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.LastName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Sex)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tblData">
+            </tbody>
+        </table>
+    </div>
 </div>
-<br />
-<div>
-    <form id="frmFilterSex" asp-action="Index" method="get">
-        <label>Seleccione Sexo:</label>
-        @Html.DropDownList("IdSexo", sexsList, new { @class = "form-control" })
-        <input id="selectedSex" class="btn btn-success" type="submit" value="Buscar"/>
-        <input class="btn btn-danger" type="button" value="Limpiar" onclick="clean()"/>
-    </form>
-</div>
-<br />
-<table class="table" id="tablePaginate">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Id)</th>
-            <th>@Html.DisplayNameFor(model => model.Name)</th>
-            <th>@Html.DisplayNameFor(model => model.LastName)</th>
-            <th>@Html.DisplayNameFor(model => model.Sex)</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var person in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(p => person.Id)</td>
-                <td>@Html.DisplayFor(p => person.Name)</td>
-                <td>@Html.DisplayFor(p => person.LastName)</td>
-                <td>@Html.DisplayFor(p => person.Sex)</td>
-                <td>
-                    <a class="btn btn-primary" asp-action="Create">Editar</a>
-                    <i class="fa fa-trash btn btn-danger" onclick="btnDelete(@person.Id)"></i>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
 
-<form asp-action="Delete" id="frmDeletePerson">
-    <input type="text" name="id" id="personId"/>
-</form>
 
 <script src="~/js/sweetalert.js"></script>
 <script src="~/js/generic.js"></script>
 
 <script>
     window.onload = function() {
-        let table = new DataTable('#tablePaginate');
-    }
-
-    function clean() {
-        document.getElementById('IdSexo').value = "";
-        document.getElementById('frmFilterSex').submit();
+        let url = "Person/ListPersons"
+        paintData(url, ["id", "name", "lastName", "sex"], "id", "Person");
     }
 
     function btnDelete(personId){
@@ -80,4 +63,13 @@
             }
         })
     }
+
+    function personsFilterBySex() {
+        let cboSexId = document.getElementById('cboSexId');
+        let sexId = cboSexId.value;
+        let url = `person/listpersons/?sexId=${sexId}`;
+        paintData(url, ["id", "name", "lastName", "sex"], "id", "Person");
+    }
+    
+
 </script>

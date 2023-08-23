@@ -124,28 +124,30 @@ namespace HospitalProject.DataAccess
             }
         }
 
-        public async Task<bool> DeleteMedicine(int id)
+        public async Task<bool> DeleteMedicine(int medicineId)
         {
+            bool successOperation;
             try
             {
                 using (BdhospitalContext db = new BdhospitalContext())
                 {
                     var query = from medicine in db.Medicamentos
-                                where medicine.Iidmedicamento == id
+                                where medicine.Iidmedicamento == medicineId
                                 && medicine.Bhabilitado == 1
                                 select medicine;
                     var deleteMedicine = await query.FirstAsync();
                     deleteMedicine.Bhabilitado = 0;
                     await db.SaveChangesAsync();
+                    successOperation = true;
                 }
-
-                return true;
             }
             catch (Exception)
             {
-
+                successOperation = false;
                 throw;
             }
+
+            return successOperation;
         }
 
         public async Task<List<MedicineClass>> FilterMedicineByName(string medicineName)
@@ -211,7 +213,7 @@ namespace HospitalProject.DataAccess
             return listPharmaceuticalForm;
         }
 
-        public async Task<List<MedicineClass>> FilterMedicineByPharmaceuticalForm(MedicineClass medicineClass)
+        public async Task<List<MedicineClass>> FilterMedicineByPharmaceuticalForm(int? pharmaceuticalFormid)
         {
             List<MedicineClass> listMedicineByPharmaceuticalForm = new List<MedicineClass>();
             try
@@ -222,7 +224,7 @@ namespace HospitalProject.DataAccess
                                 join pharmaceuticalForm in db.FormaFarmaceuticas
                                 on medicine.Iidformafarmaceutica equals pharmaceuticalForm.Iidformafarmaceutica
                                 where medicine.Bhabilitado == 1
-                                && medicine.Iidformafarmaceutica == medicineClass.IdPharmaceuticalForm
+                                && medicine.Iidformafarmaceutica == pharmaceuticalFormid
                                 select new MedicineClass
                                 {
                                     Id = medicine.Iidmedicamento,

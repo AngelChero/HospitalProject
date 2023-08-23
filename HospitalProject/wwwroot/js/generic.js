@@ -10,3 +10,32 @@
         confirmButtonText: '¡Sí, seguro!'
     })
 }
+
+function paintData(url, properties, propertyId, nameController) {
+    let content = "";
+    let tblData = document.getElementById('tblData');
+    let nameProperty;
+    let currentObject;
+    $.get(url, function (data) {
+        for (var i = 0; i < data.length; i++) {
+            content += "<tr>";
+            for (var j = 0; j < properties.length; j++) {
+                nameProperty = properties[j];
+                currentObject = data[i];
+                content += `<td>${currentObject[nameProperty]}</td>`
+            }
+            content += `
+                                <td>
+                                    <a href="${nameController}/Edit/${currentObject[propertyId]}">
+                                        <i class="fa fa-edit btn btn-warning"></i>
+                                    </a>
+                                    <i class="fa fa-trash btn btn-danger"
+                                    onclick="btnDelete(${currentObject[propertyId]})">
+                                    </i>
+                                </td>
+                            `
+            content += "</tr>";
+        }
+        tblData.innerHTML = content;  
+    })
+}

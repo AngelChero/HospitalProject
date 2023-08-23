@@ -17,18 +17,37 @@ namespace HospitalProject.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(MedicineClass medicineClass)
         {
-            List<MedicineClass> listMedicines;
             ViewBag.ListPharmaceuticalForm = await medicineDataContext.ListPharmaceuticalForm();
-            if (medicineClass.IdPharmaceuticalForm == 0 || medicineClass.IdPharmaceuticalForm == null)
-            {
-                listMedicines = await medicineDataContext.GetMedicines();
-            }
-            else
-            {
-                listMedicines = await medicineDataContext.FilterMedicineByPharmaceuticalForm(medicineClass);
-            }
+            return View();
+        }
 
-            return View(listMedicines);
+        public async Task<List<MedicineClass>> ListMedicine()
+        {
+            List<MedicineClass> listMedicine = await medicineDataContext.GetMedicines();
+            return listMedicine;
+        }
+
+        public async Task<List<MedicineClass>> MedicineByPharmaceuticalForm(int? pharmaceuticalFormid)
+        {
+            List<MedicineClass> listMedicine;
+            try
+            {
+                if (pharmaceuticalFormid == null)
+                {
+                    listMedicine = await medicineDataContext.GetMedicines();
+                }
+                else
+                {
+                    listMedicine = 
+                        await medicineDataContext.FilterMedicineByPharmaceuticalForm(pharmaceuticalFormid);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return listMedicine;
         }
 
         [HttpGet]
@@ -71,11 +90,25 @@ namespace HospitalProject.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<bool> Delete(int medicineId)
         {
-            await medicineDataContext.DeleteMedicine(id);
-            return RedirectToAction("Index");
+            bool success = await medicineDataContext.DeleteMedicine(medicineId);
+            try
+            {
+                if (success)
+                {
+                    return success;
+                }
+                else
+                {
+                    return success;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
         
     }

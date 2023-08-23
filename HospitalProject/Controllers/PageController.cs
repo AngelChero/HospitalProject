@@ -13,20 +13,22 @@ namespace HospitalProject.Controllers
             this.pageDataContext = pageDataContext;
         }
 
-        public async Task<IActionResult> Index(PageClass pageClass)
+        [HttpGet]
+        public IActionResult Index()
         {
-            List<PageClass> listPages;
-            ViewBag.PageName = pageClass.Message;
-            if (string.IsNullOrEmpty(pageClass.Message))
-            {
-                listPages = await pageDataContext.GetPages();
-            }
-            else
-            {
-                listPages = await pageDataContext.FilterPageByMessage(pageClass);
-            }
-            
-            return View(listPages);
+            return View();
+        }
+
+        public async Task<List<PageClass>> PageList()
+        {
+            var pageList = await pageDataContext.GetPages();
+            return pageList;
+        }
+
+        public async Task<List<PageClass>> PageByMessage(string message)
+        {
+            var pageByMessage = await pageDataContext.FilterPageByMessage(message);
+            return pageByMessage;
         }
 
         [HttpGet]
@@ -45,6 +47,27 @@ namespace HospitalProject.Controllers
 
             await pageDataContext.CreatePage(pageClass);
             return RedirectToAction("Index");
+        }
+
+        public async Task<bool> Delete(int pageId)
+        {
+            var successDelete = await pageDataContext.DeletePage(pageId);
+            try
+            {
+                if (successDelete)
+                {
+                    return successDelete;
+                }
+                else
+                {
+                    return successDelete;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
