@@ -1,6 +1,8 @@
 ﻿using HospitalProject.Class;
 using HospitalProject.DataAccess;
+using HospitalProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalProject.Controllers
 {
@@ -13,25 +15,27 @@ namespace HospitalProject.Controllers
             this.specialityDataContext = specialityDataContext;
         }
 
-        public async Task<FileResult> ExportExcel()
-        {
-            return await specialityDataContext.ExportExcel();
-        }
+        //public async Task<FileResult> ExportExcel()
+        //{
+        //    return await specialityDataContext.ExportExcel();
+        //}
 
         [HttpGet]
-        public async Task<IActionResult> Index(string specialityName)
+        public IActionResult Index()
         {
-            List<SpecialityClass> listSpecialities;
-            ViewBag.specialityName = specialityName;
-            if (string.IsNullOrEmpty(specialityName))
-            {
-                listSpecialities = await specialityDataContext.GetSpecialities();
-            }
-            else
-            {
-                listSpecialities = await specialityDataContext.FilterSpecialtiesByName(specialityName);
-            }
-            return View(listSpecialities);
+            return View();
+        }
+
+        public async Task<List<SpecialityClass>> ListSpeciality()
+        {
+            var listSpecialities = await specialityDataContext.GetSpecialities();
+            return listSpecialities;
+        }
+
+        public async Task<List<SpecialityClass>> SpecialtiesByName(string specialityName)
+        {
+            var filterSpecialtiesByName = await specialityDataContext.FilterSpecialtiesByName(specialityName);
+            return filterSpecialtiesByName;
         }
 
         [HttpGet]
@@ -80,11 +84,37 @@ namespace HospitalProject.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        //public int Delete(int id)
+        //{
+        //    int rpta = 0;
+        //    try
+        //    {
+        //        using (BdhospitalContext db = new BdhospitalContext())
+        //        {
+        //            Especialidad specialities = new Especialidad();
+        //            var query = (from speciality in db.Especialidads
+        //                         where speciality.Iidespecialidad == id
+        //                         && speciality.Bhabilitado == 1
+        //                         select speciality).FirstOrDefault();
+        //            query.Bhabilitado = 0;
+        //            db.SaveChanges();
+        //            rpta = 1;
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        rpta = 0;
+        //    }
+
+        //    return rpta;
+        //}
+
+        public async Task<bool> Delete(int specialityId)
         {
-            await specialityDataContext.DeleteSpeciality(id);
-            return RedirectToAction("Index");
+            bool deleteSpeciality;
+            deleteSpeciality = await specialityDataContext.DeleteSpeciality(specialityId);
+            return deleteSpeciality;
         }
     }
 }

@@ -3,8 +3,6 @@
 
 @{
     List<SelectListItem> listPharmaceuticalForm = ViewBag.ListPharmaceuticalForm;
-
-    string medicineName = ViewBag.MedicineName;
 }
 
 <br />
@@ -15,16 +13,17 @@
     <div class="col-6">
         <a class="btn btn-success d-block" asp-action="Create">Agrear Nueva Medicina</a>
     </div>
-</div>
-<br />
-<div>
-    <form id="frmFilterPharmaceuticalForm" asp-action="Index" method="get">
-        <label>Seleccione Forma Farmacéutica:</label>
-        @Html.DropDownList("IdPharmaceuticalForm", listPharmaceuticalForm, new { @class = "form-control" })
-    </form>
-</div>
-<br />
-<br />
+</div><br />
+<div class="row">    
+    <div class="col-3">
+        <select class="form-select" id="cboPharmaceuticalFormId" onchange="FilterMedicineByPharmaceuticalForm()">
+            @foreach (var item in listPharmaceuticalForm)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+</div><br />
 <table class="table">
     <thead>
         <tr>
@@ -36,43 +35,36 @@
             <th>Acciones</th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var medicine in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(m => medicine.Id)</td>
-                <td>@Html.DisplayFor(m => medicine.Name)</td>
-                <td>@Html.DisplayFor(m => medicine.Price)</td>
-                <td>@Html.DisplayFor(m => medicine.Stock)</td>
-                <td>@Html.DisplayFor(m => medicine.PharmaceuticalForm)</td>
-                <td>
-                    <a class="fa fa-edit btn btn-outline-primary" asp-action="Edit" asp-route-id="@medicine.Id"></a>
-                    <i class="fas fa-trash btn btn-danger" onclick="btnDelete(@medicine.Id)"></i>
-                </td>
-            </tr>
-        }
+    <tbody id="tblData">
     </tbody>
 </table>
-
-<form asp-action="Delete" id="frmDeleteMedicine">
-    <input type="text" name="id" id="medicineId"/>
-</form>
 
 <script src="~/js/sweetalert.js"></script>
 <script src="~/js/generic.js"></script>
 
 <script>
-    var IdPharmaceuticalForm = document.getElementById('IdPharmaceuticalForm');
-    IdPharmaceuticalForm.onchange = function () {
-        document.getElementById('frmFilterPharmaceuticalForm').submit();
+    window.onload = function() {
+        let url = `Medicine/ListMedicine`
+        paintData(url, ["id", "name", "price", "stock", "pharmaceuticalForm"], "id", "Medicine");
+    }
+
+    function FilterMedicineByPharmaceuticalForm() {
+        let pharmaceuticalFormId = document.getElementById('cboPharmaceuticalFormId').value;
+        let url = `Medicine/MedicineByPharmaceuticalForm/?pharmaceuticalFormid=${pharmaceuticalFormId}`
+        paintData(url, ["id", "name", "price", "stock", "pharmaceuticalForm"], "id", "Medicine");
     }
 
     function btnDelete(medicineId) {
-        document.getElementById('medicineId').value = medicineId;
         confirmBtnModal().then((result) => {
             if(result.isConfirmed) {
-                document.getElementById('frmDeleteMedicine').submit();
+                $.get(`Medicine/Delete/?medicineId=${medicineId}`, function(response) {
+                    if(response) {
+                        let url = `Medicine/ListMedicine/`
+                        paintData(url, ["id", "name", "price", "stock", "pharmaceuticalForm"], "id", "Medicine");
+                    }
+                })
             }
         })
     }
+
 </script>

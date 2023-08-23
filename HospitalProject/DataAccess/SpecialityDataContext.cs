@@ -8,10 +8,9 @@ namespace HospitalProject.DataAccess
 {
     public class SpecialityDataContext
     {
-        public static List<SpecialityClass> list;
         public async Task<List<SpecialityClass>> GetSpecialities()
         {
-            //List<SpecialityClass> listSpecialities = new List<SpecialityClass>();
+            List<SpecialityClass> listSpecialities = new List<SpecialityClass>();
             try
             {
                 using (BdhospitalContext db = new BdhospitalContext())
@@ -24,17 +23,16 @@ namespace HospitalProject.DataAccess
                                     Name = speciality.Nombre,
                                     Description = speciality.Descripcion
                                 };
-                    //listSpecialities = await query.ToListAsync();
-                    list = await query.ToListAsync();
+                    listSpecialities = await query.ToListAsync();
                 };
-
-                return list;
             }
             catch (Exception)
             {
 
                 throw;
             }
+
+            return listSpecialities;
         }
 
         public async Task<SpecialityClass> GetSpecialitiesById(int id)
@@ -55,14 +53,14 @@ namespace HospitalProject.DataAccess
                                 };
                    getSpecialitiesById = await query.FirstOrDefaultAsync();
                 }
-
-                return getSpecialitiesById;
             }
             catch (Exception)
             {
 
                 throw;
             }
+
+            return getSpecialitiesById;
         }
 
         public async Task<List<SpecialityClass>> FilterSpecialtiesByName(string specialityName)
@@ -73,8 +71,8 @@ namespace HospitalProject.DataAccess
                 using (BdhospitalContext db = new BdhospitalContext())
                 {
                     var query = from speciality in db.Especialidads
-                                where speciality.Bhabilitado == 1
-                                && speciality.Nombre.Contains(specialityName)
+                                where speciality.Nombre.Contains(specialityName)
+                                && speciality.Bhabilitado == 1
                                 select new SpecialityClass
                                 {
                                     Id = speciality.Iidespecialidad,
@@ -82,7 +80,7 @@ namespace HospitalProject.DataAccess
                                     Description = speciality.Descripcion
                                 };
                     filterSpecialtiesByName = await query.ToListAsync();
-                };
+                }
             }
             catch (Exception)
             {
@@ -129,7 +127,7 @@ namespace HospitalProject.DataAccess
             }
         }
 
-        public async Task<bool> DeleteSpeciality(int id)
+        public async Task<bool> DeleteSpeciality(int specialityId)
         {
             try
             {
@@ -137,20 +135,20 @@ namespace HospitalProject.DataAccess
                 {
                     var query = from speciality in db.Especialidads
                                 where speciality.Bhabilitado == 1
-                                && speciality.Iidespecialidad == id
+                                && speciality.Iidespecialidad == specialityId
                                 select speciality;
                     var deleteSpeciality = await query.FirstAsync();
                     deleteSpeciality.Bhabilitado = 0;
                     await db.SaveChangesAsync();
                 }
-
-                return true;
             }
             catch (Exception)
             {
 
                 throw;
             }
+
+            return true;
         }
 
         public async Task<bool> DuplicateName(string name)
@@ -174,37 +172,37 @@ namespace HospitalProject.DataAccess
             }
         }
 
-        public async Task<FileResult> ExportExcel()
-        {
-            byte[] buffer = await ExportDataToExcel(list);
-            return new FileContentResult(buffer, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            {
-                FileDownloadName = "archivo.xlsx" // Cambia el nombre del archivo según tu preferencia
-            };
-        }
+        //public async Task<FileResult> ExportExcel()
+        //{
+        //    byte[] buffer = await ExportDataToExcel(list);
+        //    return new FileContentResult(buffer, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        //    {
+        //        FileDownloadName = "archivo.xlsx" // Cambia el nombre del archivo según tu preferencia
+        //    };
+        //}
 
-        public async Task<byte[]> ExportDataToExcel<T>(List<T> list)
-        {
-            try
-            {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                    using (ExcelPackage ep = new ExcelPackage())
-                    {
-                        ep.Workbook.Worksheets.Add("List Especialities");
-                        ExcelWorksheet ew = ep.Workbook.Worksheets[0];
-                        ep.SaveAs(ms);
-                        byte[] buffer = ms.ToArray();
-                        return buffer;
-                    }
-                }
-            }
-            catch (Exception)
-            {
+        //public async Task<byte[]> ExportDataToExcel<T>(List<T> list)
+        //{
+        //    try
+        //    {
+        //        using (MemoryStream ms = new MemoryStream())
+        //        {
+        //            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        //            using (ExcelPackage ep = new ExcelPackage())
+        //            {
+        //                ep.Workbook.Worksheets.Add("List Especialities");
+        //                ExcelWorksheet ew = ep.Workbook.Worksheets[0];
+        //                ep.SaveAs(ms);
+        //                byte[] buffer = ms.ToArray();
+        //                return buffer;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
     }
 }

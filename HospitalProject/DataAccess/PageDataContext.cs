@@ -35,7 +35,7 @@ namespace HospitalProject.DataAccess
             return listPages;
         }
 
-        public async Task<List<PageClass>> FilterPageByMessage(PageClass pageClass)
+        public async Task<List<PageClass>> FilterPageByMessage(string message)
         {
             List<PageClass> listPagesByMessage = new List<PageClass>();
             try
@@ -44,7 +44,7 @@ namespace HospitalProject.DataAccess
                 {
                     var query = from page in db.Paginas
                                 where page.Bhabilitado == 1
-                                && page.Mensaje.Contains(pageClass.Message)
+                                && page.Mensaje.Contains(message)
                                 select new PageClass
                                 {
                                     Id = page.Iidpagina,
@@ -90,6 +90,31 @@ namespace HospitalProject.DataAccess
 
                 throw;
             }
+        }
+
+        public async Task<bool> DeletePage(int pageId)
+        {
+            bool successDelete;
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    var query = await (from page in db.Paginas
+                                       where page.Bhabilitado == 1
+                                       && page.Iidpagina == pageId
+                                       select page).FirstAsync();
+                    query.Bhabilitado = 0;
+                    await db.SaveChangesAsync();
+                    successDelete = true;
+                }
+            }
+            catch (Exception)
+            {
+                successDelete = false;
+                throw;
+            }
+
+            return successDelete;
         }
     }
 }

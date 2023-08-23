@@ -13,17 +13,14 @@
     <div class="col-6">
         <a asp-action="Create" class="btn btn-success d-block">Agregar Nueva Especialidad</a>
     </div>
-</div>
-<br />
-<div>
-    <form id="frmfilterSpecialties" asp-action="Index" method="get">
-        <label>Buscar por Nombre:</label>
-        <input id="filterSpecialties" type="text" name="specialityName" value="@specialityName" autocomplete="off"/>
-        <input class="btn btn-success" type="submit" value="Buscar"/>
+</div><br />
+<div class="row">
+    <div class="col-6">
+        <input type="text" id="txtSpecialityName"/>
+        <input class="btn btn-success" type="button" value="Buscar" onclick="filterSpecialtiesByName()" />
         <input class="btn btn-danger" type="button" value="Limpiar" onclick="Clean()"/>
-    </form>
-</div>
-<br />
+    </div>
+</div><br />
 <div class="row">
     <table class="table">
         <a asp-action="ExportExcel">Exportar a Excel</a>
@@ -35,47 +32,49 @@
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var speciality in Model)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(model => speciality.Id)</td>
-                    <td>@Html.DisplayFor(model => speciality.Name)</td>
-                    <td>@Html.DisplayFor(model => speciality.Description)</td>
-                    <td>
-                        @*<a class="fa fa-edit btn btn-warning" onclick="btnEdit(@speciality.Id)"></a>*@
-                        <a class="btn btn-warning" asp-action="Edit" asp-route-id="@speciality.Id">Editar</a>
-                        <i class="fa fa-trash btn btn-danger" onclick="btnDelete(@speciality.Id)"></i>
-                    </td>
-                </tr>
-            }
+        <tbody id="tblData">
         </tbody>
     </table>
-</div>
-
-<div>
-    <form id="frmDeleteSpeciality" asp-action="Delete" hidden>
-        <input id="EspecialityId" type="text" name="Id"/>
-    </form>
 </div>
 
 <script src="~/js/sweetalert.js"></script>
 <script src="~/js/generic.js"></script>
 
+
 <script>
-    function Clean(){
-        document.getElementById('filterSpecialties').value = "";
-        document.getElementById('frmfilterSpecialties').submit();
+    window.onload = function() {
+        let url = "Speciality/ListSpeciality"
+        paintData(url, ["id", "name", "description"], "id", "Speciality");
     }
 
     function btnDelete(specialityId) {
-        document.getElementById('EspecialityId').value = specialityId;
-        confirmBtnModal().then((result => {
-            if (result.isConfirmed) {
-                document.getElementById('frmDeleteSpeciality').submit();
+        confirmBtnModal().then((result) => {
+            if(result.isConfirmed) {
+                $.get(`speciality/Delete/?specialityId=${specialityId}`, function(data) {
+                    if(data) {
+                        let url = "Speciality/ListSpeciality"
+                        paintData(url, ["id", "name", "description"], "id", "Speciality");
+                    }
+                })
             }
-        }));
+        })
     }
+
+    function filterSpecialtiesByName() {
+        let txtSpecialityName = document.getElementById('txtSpecialityName');
+        let specialityName = txtSpecialityName.value;
+        let url = `Speciality/SpecialtiesByName/?specialityName=${specialityName}`
+        paintData(url, ["id", "name", "description"], "id", "Speciality");
+    }
+
+    function Clean() {
+        document.getElementById('txtSpecialityName').value = "";
+        let url = `Speciality/ListSpeciality`
+        paintData(url, ["id", "name", "description"], "id", "Speciality");
+    }
+
+    
+
 </script>
 
                     
