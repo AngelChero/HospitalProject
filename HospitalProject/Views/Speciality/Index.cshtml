@@ -22,19 +22,21 @@
     </div>
 </div><br />
 <div class="row">
-    <table class="table">
-        <a asp-action="ExportExcel">Exportar a Excel</a>
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Id)</th>
-                <th>@Html.DisplayNameFor(model => model.Name)</th>
-                <th>@Html.DisplayNameFor(model => model.Description)</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="tblData">
-        </tbody>
-    </table>
+    <div class="col-12">
+        <table class="table">
+            <a asp-action="ExportExcel">Exportar a Excel</a>
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Id)</th>
+                    <th>@Html.DisplayNameFor(model => model.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Description)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tblData">
+            </tbody>
+        </table>
+    </div>    
 </div>
 
 <script src="~/js/sweetalert.js"></script>
@@ -54,6 +56,7 @@
                     if(data) {
                         let url = "Speciality/ListSpeciality"
                         paintData(url, ["id", "name", "description"], "id", "Speciality");
+                        successModal();
                     }
                 })
             }

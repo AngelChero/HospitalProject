@@ -33,6 +33,87 @@ namespace HospitalProject.DataAccess
             return listCampus;
         }
 
+        public async Task<CampusClass> GetCampusById(int campusId)
+        {
+            CampusClass getCampusById = new CampusClass();
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    var query = await (from campus in db.Sedes
+                                       where campus.Iidsede == campusId
+                                       && campus.Bhabilitado == 1
+                                       select new CampusClass
+                                       {
+                                           Id = campus.Iidsede,
+                                           Name = campus.Nombre,
+                                           Direction = campus.Direccion
+                                       }).FirstAsync();
+                    getCampusById = query;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return getCampusById;
+        }
+
+        public async Task<bool> EditCampus(CampusClass campusClass)
+        {
+            bool success;
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    Sede sede = new Sede()
+                    {
+                        Iidsede = campusClass.Id,
+                        Nombre = campusClass.Name,
+                        Direccion = campusClass.Direction,
+                        Bhabilitado = 1
+                    };
+                    db.Update(sede);
+                    db.SaveChangesAsync();
+                    success = true;
+                }
+            }
+            catch (Exception)
+            {
+
+                success = false;
+            }
+
+            return success;
+        }
+
+        public async Task<bool> CreateCampus(CampusClass campusClass)
+        {
+            bool success;
+            try
+            {
+                using (BdhospitalContext db = new BdhospitalContext())
+                {
+                    Sede sede = new Sede();
+                    sede.Nombre = campusClass.Name;
+                    sede.Direccion = campusClass.Direction;
+                    sede.Bhabilitado = 1;
+                    await db.AddAsync(sede);
+                    await db.SaveChangesAsync();
+                    success = true;
+                }
+            }
+            catch (Exception)
+            {
+                success = false;
+                throw;
+            }
+
+            return success;
+        }
+
         public async Task<List<CampusClass>> FilterCampus(string campusName)
         {
             List<CampusClass> filterCampus = new List<CampusClass>();
@@ -84,5 +165,7 @@ namespace HospitalProject.DataAccess
                 throw;
             }
         }
+
+        
     }
 }
