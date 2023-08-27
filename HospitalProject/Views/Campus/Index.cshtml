@@ -2,25 +2,48 @@
 @model IEnumerable<CampusClass>
 
 @{
-    string campusName = ViewBag.CampusName;
+    
 }
-
+<br />
 <div class="row">
     <div class="col-6">
         <h3 class="text-center text-danger">Lista de Sedes</h3>
     </div>
     <div class="col-6">
-        <a class="btn btn-success" asp-action="Create">Crear Nueva Sede</a>
+        <button type="button" class="btn btn-primary d-block" data-bs-toggle="modal" data-bs-target="#createCampusModal" onclick="openCreateCampusModal()">
+            Agregar Nueva Sede
+        </button>
+        <div class="modal" id="createCampusModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">Agregar Nueva Sede</h4>
+                    </div>
+                    <div class="modal-body">
+                            <div class="form-group">
+                                <label class="form-label">Nombre</label>
+                                <input class="form-control" autocomplete="off" id="txtName" />
+                                <span class="text-danger" id="label-name-validation">
+                                    El campo Nombre es requerido
+                                </span>
+                            </div><br />
+                            <div class ="form-group">
+                                <label class="form-label">Dirección</label>
+                                <input class="form-control" autocomplete="off" id="txtDirection"/>
+                                <span class="text-danger" id="label-direction-validation">
+                                    El campo Dirección es requerido
+                                </span>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" onclick="btnAdd()">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-<br />
-<div>
-    <form id="frmfilterCampus" asp-action="Index" method="get">
-        <label>Buscar por Sede:</label>
-        <input type="text" name="campusName" onkeyup="debounce(filterCampus, 500)" value="@campusName" autocomplete="off" />
-    </form>
-</div>
-<br />
+</div><br />
 <table class="table">
     <thead>
         <tr>
@@ -38,7 +61,33 @@
                 <td>@Html.DisplayFor(c => campus.Name)</td>
                 <td>@Html.DisplayFor(c => campus.Direction)</td>
                 <td>
-                    <a class="btn btn-primary" asp-action="Edit">Editar</a>
+                    <i class="fa fa-edit btn btn-warning" onclick="openEditCampusModal(@campus.Id)"></i>
+                    <div class="modal fade" id="editCampusModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Editar Sede</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" id="txtIdCampus"/>
+                                    <div class="form-group">
+                                        <label class="form-label">Nombre</label>
+                                        <input class="form-control" autocomplete="off" id="txtNameCampus"/>
+                                        <span class="text-danger" id="name-validation">El campo Nombre es requerido</span>
+                                    </div><br />
+                                    <div class="form-group">
+                                        <label class="form-label">Dirección</label>
+                                        <input class="form-control" autocomplete="off" id="txtDirectionCampus" />
+                                        <span class="text-danger" id="direction-validation">El campo Dirección es requerido</span>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Cancelar</button>
+                                        <a class="btn btn-primary" id="confirmButtonEdit" onclick="editCampus()">Confirmar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <i class="fa fa-trash btn btn-danger" onclick="btnDelete(@campus.Id)"></i>
                 </td>
             </tr>
@@ -53,12 +102,6 @@
 <script src="~/js/generic.js"></script>
 
 <script>
-    let timeoutId;
-    function debounce(func, delay) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(func, delay);
-    }
-
     function filterCampus() {
         document.getElementById('frmfilterCampus').submit();
     }
@@ -70,5 +113,120 @@
                 document.getElementById('frmDeleteCampus').submit();
             }
         })
+    }
+
+    function btnAdd() {
+        const isValid = validationConfirm();
+        if (isValid) {
+            let txtName = document.getElementById('txtName').value;
+            let txtDirection = document.getElementById('txtDirection').value;
+            var frmCreateCampus = new FormData();
+            frmCreateCampus.append("Name", txtName);
+            frmCreateCampus.append("Direction", txtDirection);
+            $.ajax({
+                type: "POST",
+                url: "Campus/Create",
+                data: frmCreateCampus,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response) {
+                        successModal();
+                        window.location.href = "/Campus/Index";
+                    }
+                }
+            })
+        }
+    }
+
+    function validationConfirm() {
+        console.log("Estoy dentro de la función de validación");
+        let txtName = document.getElementById('txtName').value;
+        let txtDirection = document.getElementById('txtDirection').value;
+        const isValidName = txtName != null && txtName != "";
+        const isValidDirection = txtDirection != null && txtDirection != "";
+        if (!isValidName) {
+            document.getElementById("label-name-validation").style.display = "block";
+        }else{
+            document.getElementById("label-name-validation").style.display = "none";
+        }
+        if (!isValidDirection) {
+            document.getElementById("label-direction-validation").style.display = "block";
+        }else{
+            document.getElementById("label-direction-validation").style.display = "none";
+        }
+
+        return isValidName && isValidDirection;
+    }
+
+    function openCreateCampusModal() {
+        document.getElementById("label-name-validation").style.display = "none";
+        document.getElementById("label-direction-validation").style.display = "none";
+    }
+
+    function openEditCampusModal(campusId) {
+        hideValidationCampus();
+        $.ajax({
+            type: "GET",
+            url: "/Campus/Edit",
+            data: { campusId: campusId },
+            success: function(result) {
+                console.log(result);
+                $('#txtIdCampus').val(result.id);
+                $('#txtNameCampus').val(result.name);
+                $('#txtDirectionCampus').val(result.direction);
+                $('#editCampusModal').modal('show');
+            }
+        })
+    }
+
+    function editCampus() {
+        let txtIdCampus = $('#txtIdCampus').val();
+        let txtNameCampus = $('#txtNameCampus').val();
+        let txtDirectionCampus = $('#txtDirectionCampus').val();
+        const isValid = validationEditConfirm();
+        if (isValid) {
+            $.ajax({
+                type: "POST",
+                url: "/Campus/Edit",
+                data: 
+                {
+                    Id: txtIdCampus,
+                    Name: txtNameCampus,
+                    Direction: txtDirectionCampus
+                },
+                success: function(result) {
+                    if (result) {
+                        window.location.href = "/Campus/Index";
+                    }
+                }
+            })
+        }
+    }
+
+    function validationEditConfirm() {
+        let txtNameCampus = $('#txtNameCampus').val();
+        let txtDirectionCampus = $('#txtDirectionCampus').val();
+        const isValidName = txtNameCampus != null && txtNameCampus != "";
+        const isValidDirection = txtDirectionCampus != null && txtDirectionCampus != "";
+        if (!isValidName){
+            $('#name-validation').show();
+        }
+        else {
+            $('#name-validation').hide();
+        }
+        if (!isValidDirection) {
+            $('#direction-validation').show();
+        }
+        else {
+            $('#direction-validation').hide();
+        }
+        
+        return isValidName && isValidDirection;
+    }
+
+    function hideValidationCampus() {
+        $('#name-validation').hide();
+        $('#direction-validation').hide();
     }
 </script>

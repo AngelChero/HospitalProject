@@ -11,6 +11,28 @@
     })
 }
 
+function successModal(
+    title = "Se eliminó correctamente") {
+    return Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: title,
+        showConfirmButton: false,
+        timer: 5000
+    })
+}
+
+function errorModal(
+    title = "¡Lo siento ...!",
+    text = "Algo salió mal."
+    ) {
+    return Swal.fire({
+        icon: 'error',
+        title: title,
+        text: text
+    })
+}
+
 function paintData(url, properties, propertyId, nameController) {
     let content = "";
     let tblData = document.getElementById('tblData');
